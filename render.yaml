@@ -14,7 +14,3 @@ services:
         sync: false
       - key: PORT
         value: 3000
-    disk:
-      name: jiaveri-data
-      mountPath: /opt/render/project/src/backend
-      sizeGB: 1
