@@ -77,7 +77,7 @@ button{font-family:inherit;cursor:pointer;}
 </style>
 </head>
 <body>
-<div id="topbar"><div class="brand"><span class="stamp-mini">JJ</span> JobSetu</div><div id="sessionChip"></div></div>
+<div id="topbar"><div class="brand"><span class="stamp-mini">JS</span> JobSetu</div><div id="sessionChip"></div></div>
 <div id="app"></div>
 
 <script>
@@ -86,7 +86,7 @@ const CATEGORIES = ["Computer / IT","Mechanical","Electrical","Civil","Electroni
 async function api(path, opts={}){
   opts.headers = opts.headers || {};
   if(!(opts.body instanceof FormData)) opts.headers['Content-Type'] = 'application/json';
-  const token = localStorage.getItem('jj_token');
+  const token = localStorage.getItem('JS_token');
   if(token) opts.headers['Authorization'] = 'Bearer ' + token;
   const res = await fetch('/api' + path, opts);
   let data = {};
@@ -94,9 +94,9 @@ async function api(path, opts={}){
   if(!res.ok) throw new Error(data.error || 'काहीतरी चुकले.');
   return data;
 }
-function getUser(){ const raw = localStorage.getItem('jj_user'); return raw ? JSON.parse(raw) : null; }
-function setUser(u){ localStorage.setItem('jj_user', JSON.stringify(u)); }
-function logout(){ localStorage.removeItem('jj_token'); localStorage.removeItem('jj_user'); appState.page='dashboard'; render(); }
+function getUser(){ const raw = localStorage.getItem('JS_user'); return raw ? JSON.parse(raw) : null; }
+function setUser(u){ localStorage.setItem('JS_user', JSON.stringify(u)); }
+function logout(){ localStorage.removeItem('JS_token'); localStorage.removeItem('JS_user'); appState.page='dashboard'; render(); }
 function statusLabel(s){ return {applied:'अर्ज केला', interview:'इंटरव्ह्यू', selected:'निवड झाली', rejected:'नाकारले', pending:'प्रलंबित', approved:'मंजूर', blocked:'ब्लॉक'}[s]||s; }
 
 let appState = { page:'dashboard', jobFilter:'All', authMode:'login', authRole:'candidate', authError:'',
@@ -122,7 +122,7 @@ function renderGuest(){
   const f = appState;
   const showRegister = f.authRole !== 'admin';
   return `<div id="deskGuest">
-    <div class="stamp-mini" style="width:60px;height:60px;font-size:24px;border-radius:16px;">JJ</div>
+    <div class="stamp-mini" style="width:60px;height:60px;font-size:24px;border-radius:16px;">JS</div>
     <h1 class="display" style="font-size:26px;margin:0;">JobSetu — Desktop Software</h1>
     <p class="subtle" style="max-width:420px;">Admin, Company आणि Job Seeker — तिन्ही एकाच सॉफ्टवेअरमधून, Mobile App सोबत तीच खरी डेटाबेस शेअर होते.</p>
     <div class="card modal-form" style="text-align:left;">
@@ -154,7 +154,7 @@ async function renderShell(user){
   return `
   <div id="deskShell">
     <div id="deskSidebar">
-      <div class="brand"><span class="stamp-mini">JJ</span> JobSetu</div>
+      <div class="brand"><span class="stamp-mini">JS</span> JobSetu</div>
       <div class="sidebar-role"><div class="rname">${user.name}</div><div class="rtype">${user.role==='admin'?'Administrator':user.role==='company'?'Company':'Job Seeker'}</div></div>
       <div class="sidebar-nav">
         <button class="${page==='dashboard'?'active':''}" data-page="dashboard">🏠 Dashboard</button>
@@ -367,7 +367,7 @@ function attachHandlers(user){
       } else {
         data = await api(`/auth/${role}/login`, {method:'POST', body: JSON.stringify({phone, password})});
       }
-      localStorage.setItem('jj_token', data.token);
+      localStorage.setItem('JS_token', data.token);
       setUser({role: data.role, id: data.id, name: data.name});
       appState.page = 'dashboard'; appState.authError='';
       render();
