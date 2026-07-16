@@ -1,7 +1,7 @@
 {
-  "name": "jiaveri-jobs-backend",
+  "name": "jobsetu-backend",
   "version": "1.0.0",
-  "description": "Jiaveri Jobs - real backend (Express + SQLite) serving both the Mobile App and Desktop Software from one server + one database.",
+  "description": "JobSetu - real backend (Express + SQLite) serving both the Mobile App and Desktop Software from one server + one database.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
