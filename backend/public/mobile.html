@@ -71,7 +71,7 @@ button{font-family:inherit;cursor:pointer;}
 </head>
 <body>
 <div id="topbar">
-  <div class="brand"><span class="stamp-mini">JJ</span> JobSetu </div>
+  <div class="brand"><span class="stamp-mini">JS</span> JobSetu </div>
   <div id="sessionChip"></div>
 </div>
 <div id="mobileOuter">
@@ -87,7 +87,7 @@ async function api(path, opts={}){
   if(!(opts.body instanceof FormData)){
     opts.headers['Content-Type'] = 'application/json';
   }
-  const token = localStorage.getItem('jj_token');
+  const token = localStorage.getItem('JS_token');
   if(token) opts.headers['Authorization'] = 'Bearer ' + token;
   const res = await fetch('/api' + path, opts);
   let data = {};
@@ -96,11 +96,11 @@ async function api(path, opts={}){
   return data;
 }
 function getUser(){
-  const raw = localStorage.getItem('jj_user');
+  const raw = localStorage.getItem('JS_user');
   return raw ? JSON.parse(raw) : null;
 }
-function setUser(u){ localStorage.setItem('jj_user', JSON.stringify(u)); }
-function logout(){ localStorage.removeItem('jj_token'); localStorage.removeItem('jj_user'); appState.page='dashboard'; render(); }
+function setUser(u){ localStorage.setItem('JS_user', JSON.stringify(u)); }
+function logout(){ localStorage.removeItem('JS_token'); localStorage.removeItem('JS_user'); appState.page='dashboard'; render(); }
 
 let appState = { page:'dashboard', jobFilter:'All', authMode:'login', authRole:'candidate', authError:'' };
 
@@ -132,7 +132,7 @@ function renderAuth(){
   const showRegister = f.authRole !== 'admin';
   return `
   <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:50px 20px 20px;">
-    <div class="stamp-mini" style="width:52px;height:52px;font-size:20px;border-radius:16px;">JJ</div>
+    <div class="stamp-mini" style="width:52px;height:52px;font-size:20px;border-radius:16px;">JS</div>
     <h1 class="display" style="font-size:22px;margin:6px 0;">JobSetu</h1>
     <p class="subtle">स्थानिक नोकऱ्या, तुमच्या खिशात.</p>
   </div>
@@ -373,7 +373,7 @@ function attachHandlers(user){
       } else {
         data = await api(`/auth/${role}/login`, {method:'POST', body: JSON.stringify({phone, password})});
       }
-      localStorage.setItem('jj_token', data.token);
+      localStorage.setItem('JS_token', data.token);
       setUser({role: data.role, id: data.id, name: data.name});
       appState.page = 'dashboard'; appState.authError='';
       render();
