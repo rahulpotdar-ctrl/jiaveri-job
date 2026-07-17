@@ -322,7 +322,7 @@ async function adminCandidates(){
   return `<p class="subtle" style="margin-bottom:10px;">Admin ला नेहमी सर्व उमेदवारांचा पूर्ण डेटा दिसतो.</p>
   <table class="table"><thead><tr><th>नाव</th><th>Category</th><th>मोबाईल</th><th>Resume</th><th>सदस्यत्व</th></tr></thead><tbody>
   ${candidates.map(c=>`<tr><td>${c.name}</td><td>${c.category}</td><td>${c.phone}</td>
-  <td class="mono">${c.resume_path ? <a href="/uploads/${encodeURIComponent(c.resume_path)}" target="_blank" style="color:var(--marigold-dark);text-decoration:underline;">${c.resume_path}</a> : '-'}</td>
+<td class="mono">${c.resume_path ? <a href="/uploads/${encodeURIComponent(c.resume_path)}" target="_blank" style="color:var(--marigold-dark);text-decoration:underline;">${c.resume_path}</a> : '-'}</td>
   <td>${c.membership_active?'✅ सक्रिय':'❌ निष्क्रिय'}</td></tr>`).join('')}
   </tbody></table>`;
 }
