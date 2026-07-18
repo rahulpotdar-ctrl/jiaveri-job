@@ -49,10 +49,10 @@ router.post('/verify', requireAuth('company', 'candidate'), (req, res) => {
   const expiry = new Date();
   expiry.setDate(expiry.getDate() + 30);
   const expiryStr = expiry.toISOString().slice(0, 10);
-
-  db.prepare('UPDATE ${table} SET membership_active = 1, membership_expiry = ? WHERE id = ?').run(expiryStr, req.user.id);
-  db.prepare('INSERT INTO payments (user_type, user_id, amount, method, status) VALUES (?,?,?,\'Razorpay\',\'success\')')
-    .run(isCompany ? 'company' : 'candidate', req.user.id, amount);
+  
+  db.prepare(UPDATE ${table} SET membership_active = 1, membership_expiry = ? WHERE id = ?).run(expiryStr, req.user.id);
+    db.prepare('INSERT INTO payments (user_type, user_id, amount, method, status) VALUES (?,?,?,\'Razorpay\',\'success\')')
+      .run(isCompany ? 'company' : 'candidate', req.user.id, amount);
 
   res.json({ ok: true, expiry: expiryStr, amount });
 });
