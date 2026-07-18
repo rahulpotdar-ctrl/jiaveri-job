@@ -11,27 +11,26 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
-// Step 1: create a Razorpay order (amount decided server-side, not by the browser)
 router.post('/create-order', requireAuth('company', 'candidate'), async (req, res) => {
   const isCompany = req.user.role === 'company';
-  const amount = isCompany ? 200 : 99; // in rupees
+  const amount = isCompany ? 200 : 99;
 
   try {
     const order = await razorpay.orders.create({
-      amount: amount * 100, // paise मध्ये
+      amount: amount * 100,
       currency: 'INR',
-      receipt: '${req.user.role}_${req.user.id}_${Date.now()}'
+      receipt: req.user.role + '' + req.user.id + '' + Date.now()
     });
-    res.json({ order_id: order.id, amount, key_id: process.env.RAZORPAY_KEY_ID });
+    res.json({ order_id: order.id, amount: amount, key_id: process.env.RAZORPAY_KEY_ID });
   } catch (e) {
     res.status(500).json({ error: 'Razorpay order तयार करता आला नाही.' });
   }
 });
-}
 
-// Step 2: verify the payment signature Razorpay sends back after checkout
 router.post('/verify', requireAuth('company', 'candidate'), (req, res) => {
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+  const razorpay_order_id = req.body.razorpay_order_id;
+  const razorpay_payment_id = req.body.razorpay_payment_id;
+  const razorpay_signature = req.body.razorpay_signature;
 
   const expectedSignature = crypto
     .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
@@ -49,12 +48,14 @@ router.post('/verify', requireAuth('company', 'candidate'), (req, res) => {
   const expiry = new Date();
   expiry.setDate(expiry.getDate() + 30);
   const expiryStr = expiry.toISOString().slice(0, 10);
-  
-  db.prepare(UPDATE ${table} SET membership_active = 1, membership_expiry = ? WHERE id = ?).run(expiryStr, req.user.id);
-    db.prepare('INSERT INTO payments (user_type, user_id, amount, method, status) VALUES (?,?,?,\'Razorpay\',\'success\')')
-      .run(isCompany ? 'company' : 'candidate', req.user.id, amount);
 
-  res.json({ ok: true, expiry: expiryStr, amount });
+  const sql = 'UPDATE ' + table + ' SET membership_active = 1, membership_expiry = ? WHERE id = ?';
+  db.prepare(sql).run(expiryStr, req.user.id);
+
+  db.prepare('INSERT INTO payments (user_type, user_id, amount, method, status) VALUES (?,?,?,?,?)')
+    .run(isCompany ? 'company' : 'candidate', req.user.id, amount, 'Razorpay', 'success');
+
+  res.json({ ok: true, expiry: expiryStr, amount: amount });
 });
 
 module.exports = router;
