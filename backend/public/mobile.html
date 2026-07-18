@@ -438,9 +438,30 @@ function attachHandlers(user){
   };
   const payBtn = document.getElementById('payBtn');
   if(payBtn) payBtn.onclick = async ()=>{
-    const method = prompt('माध्यम निवडा: UPI / PhonePe / Google Pay / Paytm / Card', 'UPI');
-    if(!method) return;
-    try{ const r = await api('/payments/pay', {method:'POST', body: JSON.stringify({method})}); alert(`पेमेंट यशस्वी! ₹${r.amount} — सदस्यत्व ${r.expiry} पर्यंत सक्रिय.`); render(); }catch(e){ alert(e.message); }
+    try{
+      const order = await api('/payments/create-order', {method:'POST'});
+      const rzp = new Razorpay({
+        key: order.key_id,
+        amount: order.amount*100,
+        currency: 'INR',
+        name: 'JobSetu',
+        description: 'सदस्यत्व शुल्क',
+        order_id: order.order_id,
+        handler: async function(response){
+          try{
+            const verify = await api('/payments/verify', {method:'POST', body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            })});
+            alert(पेमेंट यशस्वी! ₹${verify.amount} — सदस्यत्व ${verify.expiry} पर्यंत सक्रिय.);
+            render();
+          }catch(e){ alert('पेमेंट पडताळणी अयशस्वी: '+e.message); }
+        },
+        theme: { color: '#E8A63B' }
+      });
+      rzp.open();
+    }catch(e){ alert(e.message); }
   };
 }
 
