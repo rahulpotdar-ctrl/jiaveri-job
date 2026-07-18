@@ -20,7 +20,7 @@ router.post('/create-order', requireAuth('company', 'candidate'), async (req, re
     const order = await razorpay.orders.create({
       amount: amount * 100, // paise मध्ये
       currency: 'INR',
-      receipt: $ { req.user.role}_ $ {req.user.id}_ $ {Date.now()}
+      receipt: $ {{ req.user.role}_ $ {req.user.id}_ $ {Date.now()}}
     });
     res.json({ order_id: order.id, amount, key_id: process.env.RAZORPAY_KEY_ID });
   } catch (e) {
