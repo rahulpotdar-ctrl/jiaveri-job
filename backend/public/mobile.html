@@ -307,7 +307,7 @@ async function companyProfile(){
   <div class="divider"></div>
   <div style="display:flex;justify-content:space-between;align-items:center;">
     <span class="subtle">सदस्यत्व: ${p.membership_active?'सक्रिय (संपेल: '+p.membership_expiry+')':'निष्क्रिय'}</span>
-    ${!p.membership_active?`<button class="btn btn-primary" id="payBtn">₹200 भरा</button>`:''}
+    ${!p.membership_active?`<button class="btn btn-primary" id="">₹200 भरा</button>`:''}
   </div>`;
 }
 
@@ -437,10 +437,10 @@ function attachHandlers(user){
     try{ await api('/profile/candidate/me/resume', {method:'POST', body: fd}); alert('Resume अपलोड झाला.'); render(); }catch(e){ alert(e.message); }
   };
   const payBtn = document.getElementById('payBtn');
-  if(payBtn) payBtn.onclick = async ()=>{
+  if(payBtn) payBtn.onclick = async function(){
     try{
       const order = await api('/payments/create-order', {method:'POST'});
-      const rzp = new Razorpay({
+      const options = {
         key: order.key_id,
         amount: order.amount*100,
         currency: 'INR',
@@ -454,14 +454,19 @@ function attachHandlers(user){
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature
             })});
-            alert(पेमेंट यशस्वी! ₹${verify.amount} — सदस्यत्व ${verify.expiry} पर्यंत सक्रिय.);
+            alert('पेमेंट यशस्वी! ₹' + verify.amount + ' — सदस्यत्व ' + verify.expiry + ' पर्यंत सक्रिय.');
             render();
-          }catch(e){ alert('पेमेंट पडताळणी अयशस्वी: '+e.message); }
+          }catch(e){
+            alert('पेमेंट पडताळणी अयशस्वी: ' + e.message);
+          }
         },
         theme: { color: '#E8A63B' }
-      });
+      };
+      const rzp = new Razorpay(options);
       rzp.open();
-    }catch(e){ alert(e.message); }
+    }catch(e){
+      alert(e.message);
+    }
   };
 }
 
