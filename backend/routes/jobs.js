@@ -5,24 +5,18 @@ const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
 
 // Public/candidate: search approved jobs (optional ?category=)
-router.get('/', (req, res) => {
-  const { category } = req.query;
-  let jobs;
-  if (category && category !== 'All') {
-    jobs = db.prepare(`
-      SELECT jobs.*, companies.name as company_name, companies.location as company_location
-      FROM jobs JOIN companies ON companies.id = jobs.company_id
-      WHERE jobs.status = 'approved' AND jobs.category = ?
-      ORDER BY jobs.created_at DESC
-    `).all(category);
-  } else {
-    jobs = db.prepare(`
-      SELECT jobs.*, companies.name as company_name, companies.location as company_location
-      FROM jobs JOIN companies ON companies.id = jobs.company_id
-      WHERE jobs.status = 'approved'
-      ORDER BY jobs.created_at DESC
-    `).all();
+// Candidate: only jobs matching their own category, and only if membership is active
+router.get('/', requireAuth('candidate'), (req, res) => {
+  const cand = db.prepare('SELECT category, membership_active FROM candidates WHERE id = ?').get(req.user.id);
+  if (!cand.membership_active) {
+    return res.status(402).json({ error: 'व्हॅकन्सी बघण्यासाठी आधी सदस्यत्व सक्रिय करा (₹99).', membership_required: true });
   }
+  const jobs = db.prepare(`
+    SELECT jobs.*, companies.name as company_name, companies.location as company_location
+    FROM jobs JOIN companies ON companies.id = jobs.company_id
+    WHERE jobs.status = 'approved' AND jobs.category = ?
+    ORDER BY jobs.created_at DESC
+  `).all(cand.category);
   res.json(jobs);
 });
 
