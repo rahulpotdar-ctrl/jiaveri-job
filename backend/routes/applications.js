@@ -80,8 +80,6 @@ router.get('/directory', requireAuth('company'), (req, res) => {
   });
   res.json(result);
 });
-});
-
 // Company: schedule interview / change application status
 router.put('/:id', requireAuth('company'), (req, res) => {
   const app = db.prepare(`
