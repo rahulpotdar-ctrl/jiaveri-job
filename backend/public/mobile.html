@@ -460,6 +460,9 @@ function attachHandlers(user){
               razorpay_signature: response.razorpay_signature
             })});
             alert('पेमेंट यशस्वी! ₹' + verify.amount + ' — सदस्यत्व ' + verify.expiry + ' पर्यंत सक्रिय.');
+            if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
             render();
           }catch(e){
             alert('पेमेंट पडताळणी अयशस्वी: ' + e.message);
