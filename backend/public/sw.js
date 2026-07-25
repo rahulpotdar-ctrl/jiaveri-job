@@ -1,8 +1,8 @@
 const CACHE_NAME = 'jobsetu-v1';
 const urlsToCache = [
   '/mobile',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  '/icons-192.png',
+'/icons-512.png'
 ];
 
 self.addEventListener('install', event => {
