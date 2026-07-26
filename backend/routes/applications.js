@@ -22,7 +22,6 @@ router.post('/', requireAuth('candidate'), (req, res) => {
     .run(job.company_id, 'नवीन अर्ज', ${c.name} यांनी ${job.title} साठी अर्ज केला.);
   res.json({ ok: true });
 });
-  
 // Candidate: my applications (with job + company info)
 router.get('/mine', requireAuth('candidate'), (req, res) => {
   const rows = db.prepare(`
