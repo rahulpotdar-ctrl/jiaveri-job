@@ -18,7 +18,7 @@ router.post('/', requireAuth('candidate'), (req, res) => {
 
   db.prepare('INSERT INTO applications (job_id, candidate_id) VALUES (?,?)').run(job_id, req.user.id);
   const c = db.prepare('SELECT name FROM candidates WHERE id = ?').get(req.user.id);
- db.prepare(INSERT INTO notifications (user_type, user_id, title, body) VALUES ('company', ?, ?, ?))
+ db.prepare('INSERT INTO notifications (user_type, user_id, title, body) VALUES ('company', ?, ?, ?)')
      .run(job.company_id, 'नवीन अर्ज', ${c.name} यांनी ${job.title} साठी अर्ज केला.);
     res.json({ ok: true });
   });
