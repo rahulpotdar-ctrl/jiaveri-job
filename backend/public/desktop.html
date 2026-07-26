@@ -385,8 +385,39 @@ function attachHandlers(user){
   document.querySelectorAll('[data-admintab]').forEach(b=>b.onclick=()=>{ appState.adminTab=b.dataset.admintab; render(); });
 
   document.querySelectorAll('[data-apply]').forEach(b=>b.onclick=async()=>{
-    try{ await api('/applications', {method:'POST', body: JSON.stringify({job_id: Number(b.dataset.apply)})}); alert('अर्ज यशस्वीरित्या पाठवला!'); render(); }
-    catch(e){ alert(e.message); }
+    const jobId = Number(b.dataset.apply);
+    try{
+      await api('/applications', {method:'POST', body: JSON.stringify({job_id: jobId})});
+      alert('अर्ज यशस्वीरित्या पाठवला!');
+      render();
+    }catch(e){
+      if(e.message.includes('सदस्यत्व')){
+        if(!confirm(e.message + '\n\nआत्ताच ₹99 भरून Apply करायचं का?')) return;
+        try{
+          const order = await api('/payments/create-order', {method:'POST'});
+          const rzp = new Razorpay({
+            key: order.key_id, amount: order.amount*100, currency: 'INR',
+            name: 'JobSetu', description: 'सदस्यत्व शुल्क', order_id: order.order_id,
+            handler: async function(response){
+              try{
+                await api('/payments/verify', {method:'POST', body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature
+                })});
+                await api('/applications', {method:'POST', body: JSON.stringify({job_id: jobId})});
+                alert('पेमेंट यशस्वी! अर्जही पाठवला गेला.');
+                render();
+              }catch(err){ alert('झालं नाही: ' + err.message); }
+            },
+            theme: { color: '#E8A63B' }
+          });
+          rzp.open();
+        }catch(err){ alert(err.message); }
+      } else {
+        alert(e.message);
+      }
+    }
   });
   document.querySelectorAll('[data-deletejob]').forEach(b=>b.onclick=async()=>{
     if(!confirm('ही व्हॅकन्सी डिलीट करायची आहे का?')) return;
