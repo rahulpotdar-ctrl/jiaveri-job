@@ -16,7 +16,7 @@ router.get('/', requireAuth('candidate'), (req, res) => {
   `).all(cand.category);
   res.json(jobs);
 });
-  }
+  
   const jobs = db.prepare(`
     SELECT jobs.*, companies.name as company_name, companies.location as company_location
     FROM jobs JOIN companies ON companies.id = jobs.company_id
