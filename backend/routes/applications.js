@@ -56,12 +56,8 @@ router.get('/job/:jobId', requireAuth('company'), (req, res) => {
 // has applied to ANY job posted by this company. This check happens server-side,
 // so it cannot be bypassed from the browser.
 // Company: candidate directory — matches only candidates in the same category as this company's jobs, and only if membership is active
+// Company: browse candidate directory — free to view, but phone/resume only unlock if candidate has applied (privacy rule unchanged)
 router.get('/directory', requireAuth('company'), (req, res) => {
-  const co = db.prepare('SELECT membership_active FROM companies WHERE id = ?').get(req.user.id);
-  if (!co.membership_active) {
-    return res.status(402).json({ error: 'उमेदवार डेटाबेस बघण्यासाठी आधी सदस्यत्व सक्रिय करा (₹200).', membership_required: true });
-  }
-
   const companyJobs = db.prepare('SELECT DISTINCT category FROM jobs WHERE company_id = ?').all(req.user.id);
   const categories = companyJobs.map(j => j.category);
   if (categories.length === 0) return res.json([]);
@@ -81,6 +77,8 @@ router.get('/directory', requireAuth('company'), (req, res) => {
     const full = db.prepare('SELECT phone, resume_path FROM candidates WHERE id = ?').get(c.id);
     return { id: c.id, name: c.name, category: c.category, experience: c.experience, unlocked: true, phone: full.phone, resume_path: full.resume_path };
   });
+  res.json(result);
+});
   res.json(result);
 });
 // Company: schedule interview / change application status
