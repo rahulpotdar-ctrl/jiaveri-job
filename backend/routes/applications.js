@@ -10,7 +10,6 @@ router.post('/', requireAuth('candidate'), (req, res) => {
   if (!cand.membership_active) {
     return res.status(402).json({ error: 'Apply करण्यासाठी आधी सदस्यत्व सक्रिय करा (₹99).', membership_required: true });
   }
-
   const { job_id } = req.body;
   const job = db.prepare("SELECT * FROM jobs WHERE id = ? AND status = 'approved'").get(job_id);
   if (!job) return res.status(404).json({ error: 'व्हॅकन्सी सापडली नाही.' });
