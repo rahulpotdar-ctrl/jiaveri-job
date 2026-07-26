@@ -4,14 +4,25 @@ const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Candidate: apply to a job
+// Candidate: apply to a job — requires active membership at the moment of applying
 router.post('/', requireAuth('candidate'), (req, res) => {
+  const cand = db.prepare('SELECT membership_active FROM candidates WHERE id = ?').get(req.user.id);
+  if (!cand.membership_active) {
+    return res.status(402).json({ error: 'Apply करण्यासाठी आधी सदस्यत्व सक्रिय करा (₹99).', membership_required: true });
+  }
+
   const { job_id } = req.body;
-  const job = db.prepare('SELECT * FROM jobs WHERE id = ? AND status = \'approved\'').get(job_id);
+  const job = db.prepare("SELECT * FROM jobs WHERE id = ? AND status = 'approved'").get(job_id);
   if (!job) return res.status(404).json({ error: 'व्हॅकन्सी सापडली नाही.' });
   const already = db.prepare('SELECT id FROM applications WHERE job_id = ? AND candidate_id = ?').get(job_id, req.user.id);
   if (already) return res.status(409).json({ error: 'तुम्ही आधीच अर्ज केला आहे.' });
 
+  db.prepare('INSERT INTO applications (job_id, candidate_id) VALUES (?,?)').run(job_id, req.user.id);
+  const c = db.prepare('SELECT name FROM candidates WHERE id = ?').get(req.user.id);
+  db.prepare(INSERT INTO notifications (user_type, user_id, title, body) VALUES ('company', ?, ?, ?))
+    .run(job.company_id, 'नवीन अर्ज', ${c.name} यांनी ${job.title} साठी अर्ज केला.);
+  res.json({ ok: true });
+});
   db.prepare('INSERT INTO applications (job_id, candidate_id) VALUES (?,?)').run(job_id, req.user.id);
   const cand = db.prepare('SELECT name FROM candidates WHERE id = ?').get(req.user.id);
   db.prepare(`INSERT INTO notifications (user_type, user_id, title, body) VALUES ('company', ?, ?, ?)`)
