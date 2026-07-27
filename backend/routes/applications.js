@@ -96,7 +96,7 @@ router.put('/:id', requireAuth('company'), (req, res) => {
     const labels = { interview: 'इंटरव्ह्यू निश्चित झाला', selected: 'तुमची निवड झाली आहे', rejected: 'अर्ज नाकारला गेला' };
     if (labels[status]) {
       db.prepare(`INSERT INTO notifications (user_type, user_id, title, body) VALUES ('candidate', ?, ?, ?)`)
-        .run(app.candidate_id, labels[status], `${app.job_title} साठी: ${labels[status]}.${interview_date ? ' तारीख: ' + interview_date : ''}`);
+        .run(app.candidate_id, labels[status], `${app.job_title} साठी: ${labels[status]}${interview_date ? ' तारीख: ' + interview_date : ''}`);
     }
   }
   res.json({ ok: true });
