@@ -103,9 +103,19 @@ router.put('/:id', requireAuth('company'), (req, res) => {
 });
 // Candidate: notify admin that manual UPI payment was sent (admin verifies & activates manually)
 router.post('/notify-payment', requireAuth('candidate'), (req, res) => {
-  const cand = db.prepare('SELECT name, phone FROM candidates WHERE id = ?').get(req.user.id);
-  db.prepare('INSERT INTO notifications (user_type, user_id, title, body) VALUES ('admin', NULL, ?, ?)')
-    .run('₹99 पेमेंट पडताळणी हवी', '${cand.name} (${cand.phone}) यांनी ₹99 UPI वर पाठवल्याचं सांगितलं आहे. कृपया तपासून सदस्यत्व सक्रिय करा.');
+  const cand = db.prepare(
+    'SELECT name, phone FROM candidates WHERE id = ?'
+  ).get(req.user.id);
+
+  db.prepare(
+    "INSERT INTO notifications (user_type, user_id, title, body) VALUES ('admin', NULL, ?, ?)"
+  ).run(
+    '₹99 पेमेंट पडताळणी हवी',
+    `${cand.name} (${cand.phone}) यांनी ₹99 UPI वर पाठवल्याचं सांगितलं आहे. कृपया तपासून सदस्यत्व सक्रिय करा.`
+  );
+
   res.json({ ok: true });
 });
+
+module.exports = router;
 module.exports = router;
