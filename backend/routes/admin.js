@@ -52,5 +52,13 @@ router.get('/memberships', (req, res) => {
   const candidates = db.prepare('SELECT id, name, membership_active, membership_expiry FROM candidates').all();
   res.json({ companies, candidates });
 });
-
+router.put('/candidates/:id/activate-membership', (req, res) => {
+  const expiry = new Date();
+  expiry.setDate(expiry.getDate() + 30);
+  const expiryStr = expiry.toISOString().slice(0, 10);
+  db.prepare('UPDATE candidates SET membership_active = 1, membership_expiry = ? WHERE id = ?').run(expiryStr, req.params.id);
+  db.prepare('INSERT INTO payments (user_type, user_id, amount, method, status) VALUES (?,?,?,?,?)')
+    .run('candidate', req.params.id, 99, 'Manual UPI', 'success');
+  res.json({ ok: true, expiry: expiryStr });
+});
 module.exports = router;
