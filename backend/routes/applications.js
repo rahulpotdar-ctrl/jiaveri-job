@@ -101,6 +101,7 @@ router.put('/:id', requireAuth('company'), (req, res) => {
   }
   res.json({ ok: true });
 });
+
 // Candidate: notify admin that manual UPI payment was sent (admin verifies & activates manually)
 router.post('/notify-payment', requireAuth('candidate'), (req, res) => {
   const cand = db.prepare('SELECT name, phone FROM candidates WHERE id = ?').get(req.user.id);
