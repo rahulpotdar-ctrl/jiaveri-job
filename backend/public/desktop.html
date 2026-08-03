@@ -120,26 +120,293 @@ async function render(){
 }
 
 function renderGuest(){
+
   const f = appState;
+
   const showRegister = f.authRole !== 'admin';
-  return `<div id="deskGuest">
-    <div class="stamp-mini" style="width:60px;height:60px;font-size:24px;border-radius:16px;">JS</div>
-    <h1 class="display" style="font-size:26px;margin:0;">JobSetu — Desktop Software</h1>
-    <p class="subtle" style="max-width:420px;">Admin, Company आणि Job Seeker — तिन्ही एकाच सॉफ्टवेअरमधून, Mobile App सोबत तीच खरी डेटाबेस शेअर होते.</p>
-    <div class="card modal-form" style="text-align:left;">
-      <div class="role-pick">
-        <button data-role="candidate" class="${f.authRole==='candidate'?'active':''}">Job Seeker</button>
-        <button data-role="company" class="${f.authRole==='company'?'active':''}">Company</button>
-        <button data-role="admin" class="${f.authRole==='admin'?'active':''}">Admin</button>
-      </div>
-      ${f.authError ? `<div class="err-box">${f.authError}</div>` : ''}
-      ${f.authMode==='register' ? `<div class="field"><label>${f.authRole==='company'?'कंपनीचे नाव':'नाव'}</label><input id="nameInput" placeholder="नाव टाका"></div>` : ''}
-      <div class="field"><label>मोबाईल नंबर</label><input id="phoneInput" placeholder="10 अंकी मोबाईल नंबर"></div>
-      <div class="field"><label>पासवर्ड</label><input id="passwordInput" type="password" placeholder="पासवर्ड टाका"></div>
-      <button class="btn btn-primary" id="authSubmitBtn" style="width:100%;">${f.authMode==='register'?'नोंदणी करा':'Login करा'}</button>
-      ${showRegister ? `<p class="subtle" style="text-align:center;margin-top:12px;">${f.authMode==='register'?'आधीच खाते आहे?':'खाते नाही?'} <a id="toggleAuth" style="color:var(--marigold-dark);font-weight:700;cursor:pointer;">${f.authMode==='register'?'Login करा':'नोंदणी करा'}</a></p>` : ''}
-    </div>
-  </div>`;
+
+  return `
+
+<div id="deskGuest">
+
+<!-- HERO SECTION -->
+
+<div style="width:100%;background:linear-gradient(135deg,#0d47a1,#1976d2);color:#fff;padding:60px 40px;border-radius:18px;margin-bottom:30px;">
+
+<h1 style="font-size:42px;margin-bottom:15px;">
+Job Setu
+</h1>
+
+<h2 style="color:#FFD54F;margin-bottom:20px;">
+Latur District Job Portal
+</h2>
+
+<p style="font-size:18px;max-width:700px;line-height:30px;">
+
+Connecting Local Talent with Trusted Employers Across Latur District.
+
+Find jobs, hire employees and grow together.
+
+</p>
+
+<div style="margin-top:30px;display:flex;gap:15px;flex-wrap:wrap;">
+
+<button class="btn btn-primary">
+Find Jobs
+</button>
+
+<button class="btn btn-outline">
+Post a Job
+</button>
+
+</div>
+
+</div>
+
+<!-- FEATURES -->
+
+<div class="grid cols-3">
+
+<div class="card">
+
+<h3>For Job Seekers</h3>
+
+<p>
+
+Apply for jobs from verified companies in Latur District.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>For Companies</h3>
+
+<p>
+
+Post vacancies and hire skilled local candidates.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>Secure Platform</h3>
+
+<p>
+
+Safe registration, verified employers and trusted hiring.
+
+</p>
+
+</div>
+
+</div>
+
+<br>
+
+<!-- LOGIN CARD -->
+
+<div class="card modal-form" style="max-width:420px;margin:auto;text-align:left;">
+
+<div class="role-pick">
+
+<button data-role="candidate"
+
+class="${f.authRole==='candidate'?'active':''}">
+
+Job Seeker
+
+</button>
+
+<button data-role="company"
+
+class="${f.authRole==='company'?'active':''}">
+
+Company
+
+</button>
+
+<button data-role="admin"
+
+class="${f.authRole==='admin'?'active':''}">
+
+Admin
+
+</button>
+
+</div>
+
+${f.authError ? `<div class="err-box">${f.authError}</div>` : ''}
+
+${f.authMode==='register' ?
+
+`<div class="field">
+
+<label>
+
+${f.authRole==='company'?'Company Name':'Full Name'}
+
+</label>
+
+<input id="nameInput">
+
+</div>`
+
+:''}
+
+<div class="field">
+
+<label>Mobile Number</label>
+
+<input id="phoneInput">
+
+</div>
+
+<div class="field">
+
+<label>Password</label>
+
+<input id="passwordInput" type="password">
+
+</div>
+
+<button
+
+class="btn btn-primary"
+
+id="authSubmitBtn"
+
+style="width:100%;">
+
+${f.authMode==='register'?'Register':'Login'}
+
+</button>
+
+${showRegister ?
+
+`<p style="text-align:center;margin-top:15px;">
+
+${f.authMode==='register'?'Already have an account?':'New User?'}
+
+<a
+
+id="toggleAuth"
+
+style="cursor:pointer;color:#1565c0;font-weight:bold;">
+
+${f.authMode==='register'?'Login':'Register'}
+
+</a>
+
+</p>`
+
+:''}
+
+</div>
+
+<br>
+
+<!-- ABOUT -->
+
+<div class="card">
+
+<h2>About Job Setu</h2>
+
+<p>
+
+Job Setu is a recruitment platform specially developed for
+
+Latur District.
+
+Our aim is to connect local employers with talented job
+
+seekers through a simple and transparent hiring process.
+
+</p>
+
+</div>
+
+<br>
+
+<!-- PRICING -->
+
+<div class="grid cols-2">
+
+<div class="card">
+
+<h2>Candidate Membership</h2>
+
+<h1>₹99</h1>
+
+<p>
+
+Unlimited Job Applications
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h2>Company Membership</h2>
+
+<h1>₹199</h1>
+
+<p>
+
+Post Unlimited Jobs
+
+</p>
+
+</div>
+
+</div>
+
+<br>
+
+<!-- CONTACT -->
+
+<div class="card">
+
+<h2>Contact Us</h2>
+
+<p>
+
+📞 9404180011
+
+</p>
+
+<p>
+
+📍 Latur, Maharashtra
+
+</p>
+
+<p>
+
+💳 UPI : jobsetu2026@ybl
+
+</p>
+
+</div>
+
+<br>
+
+<!-- FOOTER -->
+
+<div style="text-align:center;padding:30px;color:#666;">
+
+© 2026 Job Setu | Latur District Job Portal
+
+</div>
+
+</div>
+
+`;
+
 }
 
 async function renderShell(user){
