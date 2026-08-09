@@ -146,6 +146,9 @@ text-align:center;
 margin-top:60px;
 
 }
+.overlay{position:fixed;inset:0;background:rgba(22,26,46,.55);display:flex;align-items:center;justify-content:center;z-index:999;padding:16px;}
+.overlay .modal{background:#fff;border-radius:16px;padding:26px;max-width:340px;width:100%;position:relative;box-shadow:0 20px 50px rgba(0,0,0,.25);}
+.overlay .modal-close{position:absolute;top:10px;right:14px;background:none;border:none;font-size:22px;line-height:1;color:var(--ink-soft);}
 </style>
 </head>
 <body>
@@ -172,7 +175,7 @@ function logout(){ localStorage.removeItem('JS_token'); localStorage.removeItem(
 function statusLabel(s){ return {applied:'अर्ज केला', interview:'इंटरव्ह्यू', selected:'निवड झाली', rejected:'नाकारले', pending:'प्रलंबित', approved:'मंजूर', blocked:'ब्लॉक'}[s]||s; }
 
 let appState = { page:'dashboard', jobFilter:'All', authMode:'login', authRole:'candidate', authError:'',
-  seekerTab:'search', companyTab:'vacancies', adminTab:'companies' };
+  seekerTab:'search', companyTab:'vacancies', adminTab:'companies', upiModalOpen:false, upiModalJobId:null };
 
 /* ============ ROOT RENDER ============ */
 async function render(){
@@ -555,6 +558,24 @@ async function renderShell(user){
     <div id="deskMain">
       <div id="deskTopbar"><h2 style="margin:0;font-size:17px;">${page==='notifications'?'सूचना':'Dashboard'}</h2><div class="avatar">${user.name.slice(0,1)}</div></div>
       <div id="deskContent">${content}</div>
+    </div>
+  </div>${upiModal()}`;
+}
+function upiModal(){
+  if(!appState.upiModalOpen) return '';
+  const upiId = 'Jobsetu2026@ybl';
+  const upiLink = `upi://pay?pa=${upiId}&pn=JobSetu&am=99&cu=INR`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiLink)}`;
+  return `
+  <div class="overlay" id="upiOverlay">
+    <div class="modal" style="text-align:center;">
+      <button class="modal-close" id="upiCloseBtn">×</button>
+      <h3>₹99 सदस्यत्व शुल्क</h3>
+      <p class="subtle">खालील UPI ID वर पैसे पाठवा, किंवा QR कोड स्कॅन करा.</p>
+      <img src="${qrUrl}" alt="UPI QR" style="width:220px;height:220px;margin:10px 0;border:1px solid var(--line);border-radius:10px;">
+      <div class="card" style="margin:10px 0;font-weight:800;font-size:16px;">${upiId}</div>
+      <p class="subtle" style="font-size:12px;">पैसे पाठवल्यावर खाली बटण दाबा — Admin पडताळून सदस्यत्व सक्रिय करेल.</p>
+      <button class="btn btn-primary" id="upiPaidBtn" style="width:100%;margin-top:8px;">मी ₹99 पाठवले</button>
     </div>
   </div>`;
 }
